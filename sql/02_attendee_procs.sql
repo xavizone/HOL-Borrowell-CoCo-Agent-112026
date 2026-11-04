@@ -1,0 +1,112 @@
+-- 02_attendee_procs.sql - one schema + role per attendee, roster, reset
+-- Run as PI_LAB_ADMIN after 01_data.sql. Then, per cohort:
+--   CALL BORROWELL_AGENT_LAB.ADMIN.SETUP_ALL(PARSE_JSON($$[{"user":"APARAB","name":"ARCHANA"}, ...]$$));
+--   CALL BORROWELL_AGENT_LAB.ADMIN.SETUP_SPARES(2);
+--   SELECT * FROM BORROWELL_AGENT_LAB.ADMIN.V_ROSTER;
+-- Each attendee gets role PI_LAB_<NAME> that OWNS schema BORROWELL_AGENT_LAB.LAB_<NAME>, so they can create
+-- semantic views, Cortex Search services, agents, MCP servers, functions and tables there - and nowhere else.
+-- Co-authored with CoCo
+
+USE ROLE PI_LAB_ADMIN;
+USE WAREHOUSE PI_LAB_WH;
+USE SCHEMA BORROWELL_AGENT_LAB.ADMIN;
+
+CREATE TABLE IF NOT EXISTS ROSTER (
+  name VARCHAR, snowflake_user VARCHAR, role_name VARCHAR, schema_name VARCHAR, status VARCHAR, created_at TIMESTAMP_LTZ
+);
+
+CREATE OR REPLACE PROCEDURE SETUP_ATTENDEE(P_USER VARCHAR, P_NAME VARCHAR)
+RETURNS VARCHAR LANGUAGE SQL EXECUTE AS OWNER
+AS $$
+DECLARE
+  nm   VARCHAR DEFAULT UPPER(REGEXP_REPLACE(:P_NAME, '[^A-Za-z0-9_]', ''));
+  rl   VARCHAR;
+  sch  VARCHAR;
+  usr  VARCHAR DEFAULT UPPER(:P_USER);
+BEGIN
+  rl  := 'PI_LAB_' || nm;
+  sch := 'BORROWELL_AGENT_LAB.LAB_' || nm;
+  EXECUTE IMMEDIATE 'CREATE ROLE IF NOT EXISTS ' || rl || ' COMMENT = ''Borrowell agent lab attendee ' || nm || '''';
+  EXECUTE IMMEDIATE 'GRANT ROLE PI_LAB_ATTENDEE TO ROLE ' || rl;
+  EXECUTE IMMEDIATE 'GRANT ROLE ' || rl || ' TO ROLE PI_LAB_ADMIN';
+  EXECUTE IMMEDIATE 'CREATE SCHEMA IF NOT EXISTS ' || sch || ' COMMENT = ''Lab workspace for ' || nm || '''';
+  EXECUTE IMMEDIATE 'GRANT OWNERSHIP ON SCHEMA ' || sch || ' TO ROLE ' || rl || ' COPY CURRENT GRANTS';
+  IF (usr IS NOT NULL AND usr <> '') THEN
+    EXECUTE IMMEDIATE 'GRANT ROLE ' || rl || ' TO USER "' || usr || '"';
+  END IF;
+  DELETE FROM BORROWELL_AGENT_LAB.ADMIN.ROSTER WHERE name = :nm;
+  INSERT INTO BORROWELL_AGENT_LAB.ADMIN.ROSTER
+    SELECT :nm, NULLIF(:usr, ''), :rl, :sch, IFF(NULLIF(:usr, '') IS NULL, 'SPARE - free', 'ASSIGNED'), CURRENT_TIMESTAMP();
+  RETURN 'OK ' || nm || ': role ' || rl || ', schema ' || sch;
+EXCEPTION
+  WHEN OTHER THEN RETURN 'ERROR ' || nm || ': ' || SQLERRM;
+END;
+$$;
+
+CREATE OR REPLACE PROCEDURE SETUP_ALL(P_ATTENDEES VARIANT)
+RETURNS VARIANT LANGUAGE SQL EXECUTE AS OWNER
+AS $$
+DECLARE
+  out ARRAY DEFAULT ARRAY_CONSTRUCT();
+  r   VARCHAR;
+  rs  RESULTSET DEFAULT (SELECT value:user::VARCHAR u, COALESCE(value:name::VARCHAR, value:user::VARCHAR) n
+                         FROM TABLE(FLATTEN(INPUT => :P_ATTENDEES)));
+  c1 CURSOR FOR rs;
+BEGIN
+  FOR a IN c1 DO
+    LET uu VARCHAR := a.u;
+    LET nn VARCHAR := a.n;
+    CALL BORROWELL_AGENT_LAB.ADMIN.SETUP_ATTENDEE(:uu, :nn) INTO :r;
+    out := ARRAY_APPEND(out, r);
+  END FOR;
+  RETURN out;
+END;
+$$;
+
+CREATE OR REPLACE PROCEDURE SETUP_SPARES(P_COUNT NUMBER)
+RETURNS VARCHAR LANGUAGE SQL EXECUTE AS OWNER
+AS $$
+DECLARE r VARCHAR;
+BEGIN
+  FOR i IN 1 TO P_COUNT DO
+    LET sn VARCHAR := 'SPARE' || LPAD(i::VARCHAR, 2, '0');
+    CALL BORROWELL_AGENT_LAB.ADMIN.SETUP_ATTENDEE('', :sn) INTO :r;
+  END FOR;
+  RETURN P_COUNT || ' spares ready';
+END;
+$$;
+
+-- Walk-in: hand the first free spare to a user
+CREATE OR REPLACE PROCEDURE CLAIM_SPARE(P_USER VARCHAR)
+RETURNS VARCHAR LANGUAGE SQL EXECUTE AS OWNER
+AS $$
+DECLARE nm VARCHAR; rl VARCHAR;
+BEGIN
+  SELECT name, role_name INTO :nm, :rl FROM BORROWELL_AGENT_LAB.ADMIN.ROSTER
+   WHERE status = 'SPARE - free' ORDER BY name LIMIT 1;
+  IF (nm IS NULL) THEN RETURN 'ERROR: no spare left - run SETUP_ATTENDEE'; END IF;
+  EXECUTE IMMEDIATE 'GRANT ROLE ' || rl || ' TO USER "' || UPPER(:P_USER) || '"';
+  UPDATE BORROWELL_AGENT_LAB.ADMIN.ROSTER SET snowflake_user = UPPER(:P_USER), status = 'ASSIGNED' WHERE name = :nm;
+  RETURN 'OK: ' || UPPER(:P_USER) || ' is ' || nm || ' (USE ROLE ' || rl || ')';
+EXCEPTION WHEN OTHER THEN RETURN 'ERROR: ' || SQLERRM;
+END;
+$$;
+
+-- Stuck attendee: empty their schema (keeps role and grants)
+CREATE OR REPLACE PROCEDURE RESET_ATTENDEE(P_NAME VARCHAR)
+RETURNS VARCHAR LANGUAGE SQL EXECUTE AS OWNER
+AS $$
+DECLARE nm VARCHAR DEFAULT UPPER(:P_NAME); u VARCHAR;
+BEGIN
+  SELECT snowflake_user INTO :u FROM BORROWELL_AGENT_LAB.ADMIN.ROSTER WHERE name = :nm;
+  EXECUTE IMMEDIATE 'DROP SCHEMA IF EXISTS BORROWELL_AGENT_LAB.LAB_' || nm;
+  CALL BORROWELL_AGENT_LAB.ADMIN.SETUP_ATTENDEE(COALESCE(:u, ''), :nm);
+  RETURN 'Reset LAB_' || nm;
+END;
+$$;
+
+CREATE OR REPLACE VIEW V_ROSTER AS
+SELECT r.name, r.snowflake_user, r.role_name, r.schema_name, r.status,
+       (SELECT COUNT(*) FROM BORROWELL_AGENT_LAB.INFORMATION_SCHEMA.TABLES t
+         WHERE t.table_schema = 'LAB_' || r.name) AS objects_built
+FROM ROSTER r ORDER BY r.status, r.name;
