@@ -3,7 +3,8 @@ import streamlit as st
 from pathlib import Path
 
 LAB_DB = "BORROWELL_AGENT_LAB"
-SQL_DIR = Path(__file__).resolve().parent.parent / "sql"
+_HERE = Path(__file__).resolve().parent
+SQL_DIR = _HERE / "sql" if (_HERE / "sql").is_dir() else _HERE.parent / "sql"
 
 
 @st.cache_data(max_entries=50)
