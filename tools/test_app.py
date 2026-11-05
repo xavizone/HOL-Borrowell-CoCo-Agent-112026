@@ -34,7 +34,9 @@ for mode in ("interactive", "dry-run"):
         leftover = [t for t in ("{SCHEMA}", "{ROLE}", "{FQ_SCHEMA}", "{NAME}") if t in code_blocks]
         md = "\n".join(m.value for m in at.markdown)
         panels = md.count(":material/fact_check:")
-        bad_mode = (mode == "interactive" and panels) or "No capture" in md
+        missing = "not found next to the app" in md + code_blocks or any(
+            "not found next to the app" in str(d.proto) for d in at.get("download_button"))
+        bad_mode = (mode == "interactive" and panels) or "No capture" in md or missing
         panels_seen += panels if mode == "dry-run" else 0
         ok = not errs and not leftover and not bad_mode
         failed += not ok

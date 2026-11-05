@@ -8,10 +8,15 @@ SQL_DIR = _HERE / "sql" if (_HERE / "sql").is_dir() else _HERE.parent / "sql"
 
 
 @st.cache_data(max_entries=50)
+def _read_cached(path: str) -> str:
+    return Path(path).read_text()
+
+
 def sql_file(rel_path: str) -> str:
-    """Admin scripts are shown straight from ../sql so the guide never drifts from the tested SQL."""
+    """Admin scripts are shown straight from sql/ so the guide never drifts from the tested SQL.
+    Only files that exist are cached, so a missing file shows up as soon as it's deployed."""
     p = SQL_DIR / rel_path
-    return p.read_text() if p.exists() else f"-- {rel_path} not found next to the app (expected {p})"
+    return _read_cached(str(p)) if p.exists() else f"-- {rel_path} not found next to the app (expected {p})"
 
 
 def render_sql_file(rel_path: str, label: str | None = None, expanded: bool = False):
@@ -22,11 +27,10 @@ def render_sql_file(rel_path: str, label: str | None = None, expanded: bool = Fa
 DOC_DIR = SQL_DIR.parent
 
 
-@st.cache_data(max_entries=20)
 def doc_file(name: str) -> str:
     """Hand-out docs (questionnaire, attendee prep) live next to sql/ and are shown as-is."""
     p = DOC_DIR / name
-    return p.read_text() if p.exists() else f"{name} not found next to the app (expected {p})"
+    return _read_cached(str(p)) if p.exists() else f"{name} not found next to the app (expected {p})"
 
 
 def render_doc_download(name: str, label: str, mime: str = "text/markdown"):
