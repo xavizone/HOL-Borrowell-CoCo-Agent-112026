@@ -5,11 +5,13 @@ import streamlit as st
 from components import render_real_world_examples, render_references
 from content import links as L
 from content import story
+import dry_run
 
 _STATIC = Path(__file__).parent.parent / "static"
 
 st.image(str(_STATIC / "snowflake_full_logo.png"), width=180)
 st.title("Borrowell's Product Insights Agent")
+dry_run.banner()
 st.markdown("From raw offer telemetry to a governed agent that reads out experiments - and that Workwell can call - "
             "using only prompts in **CoCo**.")
 st.space("small")

@@ -6,6 +6,7 @@ from components import (answer_key, render_checkpoint, render_execution_context,
                         render_what_you_built, doc_file)
 from content import links as L
 from content import story
+import dry_run
 
 render_session_header("Session 5", "Evaluate, fix, and hand it to Workwell", "15 min",
                       "Eval run, `EXP114_MEMBER_OUTCOMES_V`, MCP server `PRODUCT_INSIGHTS_MCP`")
@@ -30,6 +31,7 @@ render_snowsight_route(["No CLI? Ask question 1 again in the agent **Playground*
 render_checkpoint("Before the fix, **E1 fails** (E5 needs the stretch - expect 4/6). The agent's SQL joins `events` to "
                   "`applications` on member and offer, so each application is counted once per event row: referral "
                   "revenue about **$2.6M per arm** when the whole window earned about $700K.")
+dry_run.show("s5_eval_before")
 
 render_prompt("Prompt 5.2", "Fix it in the semantic layer", """The EXP-114 readout joined events to applications, which fans out revenue. Fix it in the semantic layer:
 1. Create {FQ_SCHEMA}.EXP114_MEMBER_OUTCOMES_V with one row per assigned member: variant, score_band, impressions, clicks, applications, approvals and referral_revenue_cad inside 2026-08-15 to 2026-10-15.
@@ -46,6 +48,7 @@ render_checkpoint("""Re-run: **E1-E4 and E6 pass** (5/6 without the stretch).
 | treatment | 6.33% | 43.3% | 353,235 CAD | 36.92 CAD |
 
 CTR +9%, approvals **-17.6 points** (guardrail: -5), revenue per exposed member **down**. Don't ship.""")
+dry_run.show("s5_fix")
 
 render_prompt("Prompt 5.3", "Hand it to Workwell", """Create a Snowflake-managed MCP server {FQ_SCHEMA}.PRODUCT_INSIGHTS_MCP with one CORTEX_AGENT_RUN tool named product_insights pointing at {FQ_SCHEMA}.PRODUCT_INSIGHTS_AGENT, annotated read-only (readOnlyHint true, destructiveHint false).
 Then show me the MCP endpoint URL Workwell would call, and the grants a Workwell service role needs.""")
@@ -54,6 +57,7 @@ render_snowsight_route(["Run the SQL below, then `SHOW MCP SERVERS IN SCHEMA {FQ
 render_checkpoint("""`SHOW MCP SERVERS` lists `PRODUCT_INSIGHTS_MCP`. Workwell calls
 `https://<account>.snowflakecomputing.com/api/v2/databases/BORROWELL_AGENT_LAB/schemas/{SCHEMA}/mcp-servers/PRODUCT_INSIGHTS_MCP`
 as a service user whose role has USAGE on the MCP server and the agent.""")
+dry_run.show("s5_mcp")
 story.turn(5)
 
 render_explanation("What a fan-out is, and why the agent fell into it", """

@@ -6,6 +6,7 @@ from components import (answer_key, render_checkpoint, render_execution_context,
                         render_what_you_built)
 from content import links as L
 from content import story
+import dry_run
 
 render_session_header("Stretch", "Approval-aware offer ranking", "15 min (or take-home)",
                       "`APPROVAL_ODDS`, `RECOMMEND_OFFERS` (+ `_TOOL`), `RANKING_POLICY_COMPARISON`, an agent tool")
@@ -24,6 +25,7 @@ render_prompt("Prompt S.1", "Approval odds and a ranking function", """In {FQ_SC
 3. Show the result for member 42 next to the top 3 offers the payout_ranked policy in DATA.OFFER_RANKINGS shows them.""")
 render_checkpoint("Member 42 (Good band): payout ranking leads with the **5-Year Fixed Mortgage** ($450 - a reach offer, ~8% odds). "
                   "Approval-aware leads with **Mortgage Renewal** (52% x $320 = **$165.33**), then Personal Loan ($147.27) and Auto Loan ($135.38).")
+dry_run.show("st_ranking")
 
 render_prompt("Prompt S.2", "Project the business outcome", """Create view {FQ_SCHEMA}.RANKING_POLICY_COMPARISON comparing three policies for the top 4 carousel slots - relevance and payout_ranked from BORROWELL_AGENT_LAB.DATA.OFFER_RANKINGS, and approval_aware (top 4 by expected revenue for each score band, same odds as RECOMMEND_OFFERS).
 Weight by how many members are in each band and report expected_revenue_per_application_cad and avg_approval_odds per policy.""")
@@ -35,6 +37,7 @@ render_checkpoint("""| Policy | Expected revenue per application | Avg approval 
 | payout_ranked (EXP-114) | 98.12 CAD | 38.3% |
 
 About **+11%** over today's ranking and **+29%** over payout ranking, with members more likely to be approved.""")
+dry_run.show("st_policy")
 
 render_prompt("Prompt S.3", "Give the agent the tool", """Agent custom tools call scalar functions, so first create {FQ_SCHEMA}.RECOMMEND_OFFERS_TOOL(P_MEMBER_ID NUMBER, P_TOP_N NUMBER) RETURNS ARRAY that returns the RECOMMEND_OFFERS rows as an array of objects, ordered by rnk.
 Then update {FQ_SCHEMA}.PRODUCT_INSIGHTS_AGENT: keep both tools and add a generic tool recommend_offers backed by function {FQ_SCHEMA}.RECOMMEND_OFFERS_TOOL (inputs p_member_id and p_top_n, warehouse {WH}). Tell it to report the tool's rows exactly - no recomputing with funnel_metrics - to describe approval odds as historical rates, and never to promise approval.
@@ -45,6 +48,8 @@ render_snowsight_route([
     "Ask the question in the Playground and check the trace: `recommend_offers` should return rows, not an error.",
 ])
 render_checkpoint("The trace shows `recommend_offers` returning 3 rows and the answer quotes them ($165.33, $147.27, $135.38). Eval: **6/6**.")
+dry_run.show("st_tool")
+dry_run.show("s5_eval_after", "Dry-run result: the final eval")
 story.turn(6)
 story.epilogue()
 

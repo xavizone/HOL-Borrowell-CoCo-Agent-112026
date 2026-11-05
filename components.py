@@ -108,6 +108,9 @@ def render_session_header(label: str, title: str, duration: str, building: str):
 
 
 def render_execution_context():
+    import dry_run
+
+    dry_run.banner()
     st.info(
         ":material/terminal: **Primary: CoCo Desktop or CoCo CLI** - paste each prompt into CoCo.  "
         ":material/web: **Also possible in Snowsight** - open *Do it in Snowsight* under any step.",

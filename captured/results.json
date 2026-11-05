@@ -1,0 +1,484 @@
+{
+ "tables": [
+  {
+   "TABLE_NAME": "APPLICATIONS",
+   "ROW_COUNT": 12173,
+   "COMMENT": "Applications submitted through the marketplace and the partner decision."
+  },
+  {
+   "TABLE_NAME": "EXPERIMENTS",
+   "ROW_COUNT": 2,
+   "COMMENT": "Product experiments (A/B tests) run on the marketplace"
+  },
+  {
+   "TABLE_NAME": "EXPERIMENT_ASSIGNMENTS",
+   "ROW_COUNT": 19612,
+   "COMMENT": "Which members were in which experiment arm (non-test members only)"
+  },
+  {
+   "TABLE_NAME": "EXPERIMENT_DOCS",
+   "ROW_COUNT": 10,
+   "COMMENT": "Product data science knowledge base: briefs, metric definitions, data issues"
+  },
+  {
+   "TABLE_NAME": "MEMBERS",
+   "ROW_COUNT": 20000,
+   "COMMENT": "Borrowell members (synthetic). One row per member."
+  },
+  {
+   "TABLE_NAME": "OFFER_RANKINGS",
+   "ROW_COUNT": 47,
+   "COMMENT": "Offer order per score band for each ranking policy"
+  },
+  {
+   "TABLE_NAME": "PARTNER_OFFERS",
+   "ROW_COUNT": 16,
+   "COMMENT": "Partner offers in the Borrowell marketplace (fictional partners)."
+  },
+  {
+   "TABLE_NAME": "TELEMETRY_EVENTS",
+   "ROW_COUNT": 586142,
+   "COMMENT": "Raw product telemetry for the offers marketplace (synthetic). Grain: one row per collected event."
+  }
+ ],
+ "event_mix": [
+  {
+   "EVENT_TYPE": "offer_impression",
+   "ROWS_COLLECTED": 517270,
+   "DISTINCT_EVENTS": 482662,
+   "BOT_ROWS": 10000
+  },
+  {
+   "EVENT_TYPE": "offer_click",
+   "ROWS_COLLECTED": 38089,
+   "DISTINCT_EVENTS": 38089,
+   "BOT_ROWS": 6044
+  },
+  {
+   "EVENT_TYPE": "apply_start",
+   "ROWS_COLLECTED": 18610,
+   "DISTINCT_EVENTS": 18610,
+   "BOT_ROWS": 0
+  },
+  {
+   "EVENT_TYPE": "apply_submit",
+   "ROWS_COLLECTED": 12173,
+   "DISTINCT_EVENTS": 12173,
+   "BOT_ROWS": 0
+  }
+ ],
+ "naive_vs_governed": [
+  {
+   "WEEK": "2026-07-27",
+   "NAIVE_CTR_PCT": "7.86",
+   "GOVERNED_CTR_PCT": "6.02"
+  },
+  {
+   "WEEK": "2026-08-03",
+   "NAIVE_CTR_PCT": "7.94",
+   "GOVERNED_CTR_PCT": "5.80"
+  },
+  {
+   "WEEK": "2026-08-10",
+   "NAIVE_CTR_PCT": "7.68",
+   "GOVERNED_CTR_PCT": "5.72"
+  },
+  {
+   "WEEK": "2026-08-17",
+   "NAIVE_CTR_PCT": "8.04",
+   "GOVERNED_CTR_PCT": "6.21"
+  },
+  {
+   "WEEK": "2026-08-24",
+   "NAIVE_CTR_PCT": "7.97",
+   "GOVERNED_CTR_PCT": "6.08"
+  },
+  {
+   "WEEK": "2026-08-31",
+   "NAIVE_CTR_PCT": "8.05",
+   "GOVERNED_CTR_PCT": "6.28"
+  },
+  {
+   "WEEK": "2026-09-07",
+   "NAIVE_CTR_PCT": "7.58",
+   "GOVERNED_CTR_PCT": "6.05"
+  },
+  {
+   "WEEK": "2026-09-14",
+   "NAIVE_CTR_PCT": "7.75",
+   "GOVERNED_CTR_PCT": "6.00"
+  },
+  {
+   "WEEK": "2026-09-21",
+   "NAIVE_CTR_PCT": "6.89",
+   "GOVERNED_CTR_PCT": "5.99"
+  },
+  {
+   "WEEK": "2026-09-28",
+   "NAIVE_CTR_PCT": "6.89",
+   "GOVERNED_CTR_PCT": "5.98"
+  },
+  {
+   "WEEK": "2026-10-05",
+   "NAIVE_CTR_PCT": "7.01",
+   "GOVERNED_CTR_PCT": "6.00"
+  },
+  {
+   "WEEK": "2026-10-12",
+   "NAIVE_CTR_PCT": "6.63",
+   "GOVERNED_CTR_PCT": "5.94"
+  },
+  {
+   "WEEK": "2026-10-19",
+   "NAIVE_CTR_PCT": "6.79",
+   "GOVERNED_CTR_PCT": "5.96"
+  },
+  {
+   "WEEK": "2026-10-26",
+   "NAIVE_CTR_PCT": "6.76",
+   "GOVERNED_CTR_PCT": "5.97"
+  }
+ ],
+ "issue_breakdown": [
+  {
+   "STEP": "Raw rows",
+   "CLICKS": 38089,
+   "IMPRESSIONS": 517270
+  },
+  {
+   "STEP": "minus bots",
+   "CLICKS": 32045,
+   "IMPRESSIONS": 507270
+  },
+  {
+   "STEP": "minus test accounts",
+   "CLICKS": 27779,
+   "IMPRESSIONS": 496949
+  },
+  {
+   "STEP": "minus duplicate client events",
+   "CLICKS": 27779,
+   "IMPRESSIONS": 463086
+  }
+ ],
+ "search": [
+  {
+   "TITLE": "Known data issue: Android 5.2.0 duplicate impressions",
+   "DOC_TYPE": "data_issue"
+  },
+  {
+   "TITLE": "EXP-114 brief: payout-ranked offer carousel",
+   "DOC_TYPE": "experiment_brief"
+  },
+  {
+   "TITLE": "Metric definition: offer click-through rate (CTR)",
+   "DOC_TYPE": "metric_definition"
+  }
+ ],
+ "readout": [
+  {
+   "ARM": "control",
+   "EXP_ASSIGNED_MEMBERS": 9675,
+   "EXP_EXPOSED_MEMBERS": 9353,
+   "EXP_CTR": "0.058102",
+   "EXP_APPROVAL_RATE": "0.608839",
+   "EXP_REFERRAL_REVENUE": "348865.00",
+   "EXP_REVENUE_PER_EXPOSED_MEMBER": "37.29979686"
+  },
+  {
+   "ARM": "treatment",
+   "EXP_ASSIGNED_MEMBERS": 9937,
+   "EXP_EXPOSED_MEMBERS": 9567,
+   "EXP_CTR": "0.063297",
+   "EXP_APPROVAL_RATE": "0.432642",
+   "EXP_REFERRAL_REVENUE": "353235.00",
+   "EXP_REVENUE_PER_EXPOSED_MEMBER": "36.92223267"
+  }
+ ],
+ "recommend_42": [
+  {
+   "RNK": 1,
+   "OFFER_ID": 11,
+   "OFFER_NAME": "Mortgage Renewal",
+   "PARTNER_NAME": "Harbour Mortgage",
+   "PAYOUT_CAD": 320.0,
+   "APPROVAL_ODDS": 0.517,
+   "EXPECTED_REVENUE_CAD": 165.33
+  },
+  {
+   "RNK": 2,
+   "OFFER_ID": 6,
+   "OFFER_NAME": "Personal Loan",
+   "PARTNER_NAME": "Summit Lending",
+   "PAYOUT_CAD": 180.0,
+   "APPROVAL_ODDS": 0.818,
+   "EXPECTED_REVENUE_CAD": 147.27
+  },
+  {
+   "RNK": 3,
+   "OFFER_ID": 12,
+   "OFFER_NAME": "Auto Loan",
+   "PARTNER_NAME": "Evergreen Auto Finance",
+   "PAYOUT_CAD": 160.0,
+   "APPROVAL_ODDS": 0.846,
+   "EXPECTED_REVENUE_CAD": 135.38
+  }
+ ],
+ "member_42": [
+  {
+   "MEMBER_ID": 42,
+   "PROVINCE": "ON",
+   "SCORE_BAND": "Good",
+   "IS_NEWCOMER": false
+  }
+ ],
+ "payout_rank_42": [
+  {
+   "RNK": 1,
+   "OFFER_NAME": "5-Year Fixed Mortgage",
+   "PARTNER_NAME": "Harbour Mortgage",
+   "PAYOUT_CAD": "450.00"
+  },
+  {
+   "RNK": 2,
+   "OFFER_NAME": "Mortgage Renewal",
+   "PARTNER_NAME": "Harbour Mortgage",
+   "PAYOUT_CAD": "320.00"
+  },
+  {
+   "RNK": 3,
+   "OFFER_NAME": "Debt Consolidation Loan",
+   "PARTNER_NAME": "Summit Lending",
+   "PAYOUT_CAD": "240.00"
+  }
+ ],
+ "policy_comparison": [
+  {
+   "POLICY": "approval_aware",
+   "EXPECTED_REVENUE_PER_APPLICATION_CAD": "126.14",
+   "AVG_APPROVAL_ODDS": "0.659"
+  },
+  {
+   "POLICY": "relevance",
+   "EXPECTED_REVENUE_PER_APPLICATION_CAD": "113.41",
+   "AVG_APPROVAL_ODDS": "0.593"
+  },
+  {
+   "POLICY": "payout_ranked",
+   "EXPECTED_REVENUE_PER_APPLICATION_CAD": "98.12",
+   "AVG_APPROVAL_ODDS": "0.383"
+  }
+ ],
+ "dup_impressions": [
+  {
+   "PLATFORM": "android",
+   "APP_VERSION": "5.2.0",
+   "SURFACE": "dashboard",
+   "AFTER_SEP21": "false",
+   "ROWS_COLLECTED": 1606,
+   "DISTINCT_EVENTS": 803
+  },
+  {
+   "PLATFORM": "android",
+   "APP_VERSION": "5.2.0",
+   "SURFACE": "dashboard",
+   "AFTER_SEP21": "true",
+   "ROWS_COLLECTED": 67610,
+   "DISTINCT_EVENTS": 33805
+  }
+ ],
+ "views": [
+  {
+   "VIEW_NAME": "APPLICATIONS_V",
+   "OFFER_EVENTS_V_ROWS": 515540
+  },
+  {
+   "VIEW_NAME": "EXP114_MEMBER_OUTCOMES_V",
+   "OFFER_EVENTS_V_ROWS": 515540
+  },
+  {
+   "VIEW_NAME": "MEMBERS_V",
+   "OFFER_EVENTS_V_ROWS": 515540
+  },
+  {
+   "VIEW_NAME": "OFFERS_V",
+   "OFFER_EVENTS_V_ROWS": 515540
+  },
+  {
+   "VIEW_NAME": "OFFER_EVENTS_V",
+   "OFFER_EVENTS_V_ROWS": 515540
+  },
+  {
+   "VIEW_NAME": "RANKING_POLICY_COMPARISON",
+   "OFFER_EVENTS_V_ROWS": 515540
+  }
+ ],
+ "objects": [
+  {
+   "created_on": "2026-11-03T12:29:13.341000-08:00",
+   "name": "APPLICATIONS_V",
+   "database_name": "BORROWELL_AGENT_LAB",
+   "schema_name": "LAB_DEMO",
+   "kind": "VIEW",
+   "comment": "Applications from real members",
+   "cluster_by": "",
+   "rows": 0,
+   "bytes": 0,
+   "owner": "PI_LAB_DEMO",
+   "retention_time": "1",
+   "owner_role_type": "ROLE",
+   "is_hybrid": "N",
+   "is_dynamic": "N",
+   "is_iceberg": "N",
+   "is_interactive": "N"
+  },
+  {
+   "created_on": "2026-11-03T12:29:43.875000-08:00",
+   "name": "APPROVAL_ODDS",
+   "database_name": "BORROWELL_AGENT_LAB",
+   "schema_name": "LAB_DEMO",
+   "kind": "TABLE",
+   "comment": "",
+   "cluster_by": "",
+   "rows": 23,
+   "bytes": 1024,
+   "owner": "PI_LAB_DEMO",
+   "retention_time": "1",
+   "owner_role_type": "ROLE",
+   "is_hybrid": "N",
+   "is_dynamic": "N",
+   "is_iceberg": "N",
+   "is_interactive": "N"
+  },
+  {
+   "created_on": "2026-11-03T12:32:58.884000-08:00",
+   "name": "EXP114_MEMBER_OUTCOMES_V",
+   "database_name": "BORROWELL_AGENT_LAB",
+   "schema_name": "LAB_DEMO",
+   "kind": "VIEW",
+   "comment": "EXP-114: one row per assigned member, outcomes in the window",
+   "cluster_by": "",
+   "rows": 0,
+   "bytes": 0,
+   "owner": "PI_LAB_DEMO",
+   "retention_time": "1",
+   "owner_role_type": "ROLE",
+   "is_hybrid": "N",
+   "is_dynamic": "N",
+   "is_iceberg": "N",
+   "is_interactive": "N"
+  },
+  {
+   "created_on": "2026-11-03T12:29:12.620000-08:00",
+   "name": "MEMBERS_V",
+   "database_name": "BORROWELL_AGENT_LAB",
+   "schema_name": "LAB_DEMO",
+   "kind": "VIEW",
+   "comment": "Real (non-test) members with their EXP-114 arm",
+   "cluster_by": "",
+   "rows": 0,
+   "bytes": 0,
+   "owner": "PI_LAB_DEMO",
+   "retention_time": "1",
+   "owner_role_type": "ROLE",
+   "is_hybrid": "N",
+   "is_dynamic": "N",
+   "is_iceberg": "N",
+   "is_interactive": "N"
+  },
+  {
+   "created_on": "2026-11-03T12:29:13.787000-08:00",
+   "name": "OFFERS_V",
+   "database_name": "BORROWELL_AGENT_LAB",
+   "schema_name": "LAB_DEMO",
+   "kind": "VIEW",
+   "comment": "",
+   "cluster_by": "",
+   "rows": 0,
+   "bytes": 0,
+   "owner": "PI_LAB_DEMO",
+   "retention_time": "1",
+   "owner_role_type": "ROLE",
+   "is_hybrid": "N",
+   "is_dynamic": "N",
+   "is_iceberg": "N",
+   "is_interactive": "N"
+  },
+  {
+   "created_on": "2026-11-03T12:29:12.919000-08:00",
+   "name": "OFFER_EVENTS_V",
+   "database_name": "BORROWELL_AGENT_LAB",
+   "schema_name": "LAB_DEMO",
+   "kind": "VIEW",
+   "comment": "Deduplicated member telemetry: no bots, no test accounts, one row per client_event_id",
+   "cluster_by": "",
+   "rows": 0,
+   "bytes": 0,
+   "owner": "PI_LAB_DEMO",
+   "retention_time": "1",
+   "owner_role_type": "ROLE",
+   "is_hybrid": "N",
+   "is_dynamic": "N",
+   "is_iceberg": "N",
+   "is_interactive": "N"
+  },
+  {
+   "created_on": "2026-11-03T12:32:59.685000-08:00",
+   "name": "PRODUCT_INSIGHTS_SV",
+   "database_name": "BORROWELL_AGENT_LAB",
+   "schema_name": "LAB_DEMO",
+   "kind": "VIEW",
+   "comment": "Borrowell offers-marketplace funnel for product data science: impressions, clicks, applications, approvals and referral revenue (CAD), by offer, partner, surface, platform, member segment and experiment arm. Bots, internal test accounts and duplicate client events are already removed.\n",
+   "cluster_by": "",
+   "rows": 0,
+   "bytes": 0,
+   "owner": "PI_LAB_DEMO",
+   "retention_time": "1",
+   "owner_role_type": "ROLE",
+   "is_hybrid": "N",
+   "is_dynamic": "N",
+   "is_iceberg": "N",
+   "is_interactive": "N"
+  },
+  {
+   "created_on": "2026-11-03T12:30:32.551000-08:00",
+   "name": "RANKING_POLICY_COMPARISON",
+   "database_name": "BORROWELL_AGENT_LAB",
+   "schema_name": "LAB_DEMO",
+   "kind": "VIEW",
+   "comment": "",
+   "cluster_by": "",
+   "rows": 0,
+   "bytes": 0,
+   "owner": "PI_LAB_DEMO",
+   "retention_time": "1",
+   "owner_role_type": "ROLE",
+   "is_hybrid": "N",
+   "is_dynamic": "N",
+   "is_iceberg": "N",
+   "is_interactive": "N"
+  }
+ ],
+ "agents": [
+  {
+   "created_on": "2026-11-03T12:56:33.554000-08:00",
+   "name": "PRODUCT_INSIGHTS_AGENT",
+   "database_name": "BORROWELL_AGENT_LAB",
+   "schema_name": "LAB_DEMO",
+   "owner": "PI_LAB_DEMO",
+   "comment": "Borrowell product data science agent with approval-aware offer ranking (lab stretch)",
+   "profile": "{\"display_name\": \"Product Insights Agent\"}",
+   "is_secure": "false"
+  }
+ ],
+ "mcp": [
+  {
+   "created_on": "2026-11-03T12:29:42.844000-08:00",
+   "name": "PRODUCT_INSIGHTS_MCP",
+   "database_name": "BORROWELL_AGENT_LAB",
+   "schema_name": "LAB_DEMO",
+   "owner": "PI_LAB_DEMO",
+   "comment": null
+  }
+ ]
+}
