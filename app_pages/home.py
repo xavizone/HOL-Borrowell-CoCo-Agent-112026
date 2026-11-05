@@ -9,7 +9,8 @@ import dry_run
 
 _STATIC = Path(__file__).parent.parent / "static"
 
-st.image(str(_STATIC / "snowflake_full_logo.png"), width=180)
+_LOGO = _STATIC / "borrowell_logo.png"
+st.image(str(_LOGO if _LOGO.exists() else _STATIC / "snowflake_full_logo.png"), width=220)
 st.title("Borrowell's Product Insights Agent")
 dry_run.banner()
 st.markdown("From raw offer telemetry to a governed agent that reads out experiments - and that Workwell can call - "
