@@ -6,7 +6,6 @@ from components import (answer_key, render_checkpoint, render_execution_context,
                         render_what_you_built)
 from content import links as L
 from content import story
-import dry_run
 
 render_session_header("Session 4", "Build the Product Insights agent", "20 min", "Cortex Agent `PRODUCT_INSIGHTS_AGENT`")
 render_execution_context()
@@ -31,7 +30,6 @@ render_snowsight_route([
     "**Tools » Cortex Analyst** » `PRODUCT_INSIGHTS_SV`, warehouse `{WH}`. **Tools » Cortex Search** » `EXPERIMENT_DOCS_SEARCH`.",
 ])
 render_checkpoint("`SHOW AGENTS IN SCHEMA {FQ_SCHEMA};` lists the agent, and it appears under **AI & ML » Agents**.")
-dry_run.show("s4_create")
 
 render_prompt("Prompt 4.2", "Ask Priya's and Marco's questions", """Ask {FQ_SCHEMA}.PRODUCT_INSIGHTS_AGENT these two questions with SNOWFLAKE.CORTEX.DATA_AGENT_RUN, and for each show the answer, the tools it called and the SQL it ran:
 1. Read out EXP-114: did the payout-ranked carousel win? Include revenue per exposed member for both arms.
@@ -45,7 +43,6 @@ render_checkpoint("Question 2: the agent finds the **Android 5.2.0** issue. Ques
                   "**approval guardrail was breached** (60.9% → 43.3%). **But look at the revenue numbers and the SQL** - "
                   "on our test run it said revenue per exposed member went *up* by about $3.54, with referral revenue around "
                   "$2.6M per arm. Hold that thought.")
-dry_run.show("s4_ask")
 story.turn(4)
 
 render_explanation("How the agent decides what to do", """

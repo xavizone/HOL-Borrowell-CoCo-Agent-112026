@@ -6,7 +6,6 @@ from components import (render_checkpoint, render_execution_context, render_expl
                         render_what_you_built)
 from content import links as L
 from content import story
-import dry_run
 
 render_session_header("Session 1", "Explore the telemetry", "10 min", "Nothing yet - you're profiling `BORROWELL_AGENT_LAB.DATA`")
 render_execution_context()
@@ -25,7 +24,6 @@ render_snowsight_route([
     "Click each table to see its columns and comments; `TELEMETRY_EVENTS` » **Data Preview**.",
 ], sql="SELECT table_name, row_count, comment FROM BORROWELL_AGENT_LAB.INFORMATION_SCHEMA.TABLES\nWHERE table_schema = 'DATA' ORDER BY 1;")
 render_checkpoint("You see **8 tables** in `DATA`. `TELEMETRY_EVENTS` has about **586K** rows, `APPLICATIONS` about 12K, `MEMBERS` 20,000.")
-dry_run.show("s1_tables")
 
 render_prompt("Prompt 1.2", "Profile the offers funnel", """Profile BORROWELL_AGENT_LAB.DATA.TELEMETRY_EVENTS for a product data scientist:
 - event types with row counts and distinct client_event_id counts
@@ -39,13 +37,11 @@ render_snowsight_route(["Open a worksheet with role `{ROLE}` and warehouse `{WH}
 FROM BORROWELL_AGENT_LAB.DATA.TELEMETRY_EVENTS GROUP BY 1 ORDER BY 2 DESC;""")
 render_checkpoint("CoCo notices three things: impression **rows outnumber distinct `client_event_id`s** (517K vs 483K), "
                   "**bots** account for about 6K clicks, and **test accounts** are in the data. Naive CTR is about **7.4-8.0%**.")
-dry_run.show("s1_profile")
 
 render_prompt("Prompt 1.3", "Is the September drop real?", """Naive CTR drops from about 7.8% to 6.8% around 2026-09-21.
 Break offer_impression rows down by platform, app_version and surface before and after that date, and check whether the same client_event_id appears more than once. Is the drop real?""")
 render_checkpoint("The drop comes from **Android `5.2.0` on the `dashboard` surface**, which sends every impression twice "
                   "(same `client_event_id`, ~180 ms apart). Count distinct events and the drop disappears - Marco's campaigns are safe.")
-dry_run.show("s1_dups")
 story.turn(1)
 
 render_explanation("The three data issues in this lab (all realistic)", """

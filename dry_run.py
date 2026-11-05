@@ -264,6 +264,44 @@ PANELS = {
 
 RESPONSE_PANELS = {"s4_ask", "s5_fix", "st_tool", "s5_eval_after"}  # agent answers, not just SQL
 
+# Which captured panels answer each prompt. Prompt 2.2 (create the semantic view) has no captured output.
+PROMPT_PANELS = {
+    "Prompt 1.1": ["s1_tables"], "Prompt 1.2": ["s1_profile"], "Prompt 1.3": ["s1_dups"],
+    "Prompt 2.1": ["s2_views"], "Prompt 2.3": ["s2_prove"],
+    "Prompt 3.1": ["s3_search"],
+    "Prompt 4.1": ["s4_create"], "Prompt 4.2": ["s4_ask"],
+    "Prompt 5.1": ["s5_eval_before"], "Prompt 5.2": ["s5_fix"], "Prompt 5.3": ["s5_mcp"],
+    "Prompt S.1": ["st_ranking"], "Prompt S.2": ["st_policy"], "Prompt S.3": ["st_tool", "s5_eval_after"],
+}
+PANEL_TITLES = {"s5_eval_after": "Simulated response: the final eval"}
+
+
+def _state_key(prompt_id: str) -> str:
+    return "_coco_" + prompt_id.replace(" ", "_").replace(".", "_")
+
+
+def _flip(prompt_id: str):
+    k = _state_key(prompt_id)
+    st.session_state[k] = not st.session_state.get(k, False)
+
+
+def response_button(prompt_id: str) -> bool:
+    """CoCo Response toggle for a prompt header. Returns False (draw nothing) if there's no capture."""
+    if not enabled() or prompt_id not in PROMPT_PANELS:
+        return False
+    shown = st.session_state.get(_state_key(prompt_id), False)
+    st.button("Hide response" if shown else "CoCo Response", key=f"btn{_state_key(prompt_id)}",
+              icon=":material/visibility_off:" if shown else ":material/smart_toy:",
+              type="secondary" if shown else "primary", on_click=_flip, args=(prompt_id,), width="stretch")
+    return True
+
+
+def prompt_response(prompt_id: str):
+    """Render the captured result(s) for a prompt when its CoCo Response button is on."""
+    if enabled() and st.session_state.get(_state_key(prompt_id), False):
+        for key in PROMPT_PANELS.get(prompt_id, []):
+            show(key, PANEL_TITLES.get(key))
+
 
 def show(key: str, title: str | None = None):
     """Render the captured result for one step. No-op in the interactive guide."""
@@ -278,6 +316,6 @@ def show(key: str, title: str | None = None):
 
 def banner():
     if enabled():
-        st.info("**Simulated results (read-only).** You don't need a Snowflake connection. Every prompt is shown "
-                "with the result it produced on a real run of this lab, so you can follow along or catch up. "
+        st.info("**Simulated results (read-only).** You don't need a Snowflake connection. Click **CoCo Response** "
+                "next to a prompt to see the result it produced on a real run of this lab, so you can follow along or catch up. "
                 "Prompts and SQL use the `DEMO` lab.", icon=":material/visibility:")

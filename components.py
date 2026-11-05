@@ -149,13 +149,19 @@ def render_prompt(prompt_id: str, title: str, prompt_text: str):
     if cb_key not in st.session_state:
         st.session_state[cb_key] = store.get(key, False)
     with st.container(border=True):
-        header_col, check_col = st.columns([5, 1], vertical_alignment="center")
+        header_col, check_col = st.columns([4, 1], vertical_alignment="center")
         with header_col:
             st.markdown(f"#### :material/terminal: {prompt_id} - {title}")
         with check_col:
-            st.checkbox("Done", key=cb_key, on_change=_on_toggle, args=(prompt_id,))
+            import dry_run
+
+            if not dry_run.enabled():
+                st.checkbox("Done", key=cb_key, on_change=_on_toggle, args=(prompt_id,))
+            else:
+                dry_run.response_button(prompt_id)
         st.caption("Copy this prompt into CoCo Desktop or the CoCo CLI")
         st.code(fill(prompt_text), language="text", wrap_lines=True)
+        dry_run.prompt_response(prompt_id)
 
 
 def render_explanation(title: str, body: str):

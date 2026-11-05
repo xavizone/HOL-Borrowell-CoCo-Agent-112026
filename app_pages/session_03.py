@@ -6,7 +6,6 @@ from components import (answer_key, render_checkpoint, render_execution_context,
                         render_what_you_built)
 from content import links as L
 from content import story
-import dry_run
 
 render_session_header("Session 3", "Add knowledge with Cortex Search", "10 min",
                       "Cortex Search service `EXPERIMENT_DOCS_SEARCH`")
@@ -29,7 +28,6 @@ render_snowsight_route([
 ], sql="""SELECT PARSE_JSON(SNOWFLAKE.CORTEX.SEARCH_PREVIEW('{FQ_SCHEMA}.EXPERIMENT_DOCS_SEARCH',
   '{"query": "why did CTR drop in late September", "columns": ["title", "doc_type"], "limit": 3}')):results;""")
 render_checkpoint("Top hit: **Known data issue: Android 5.2.0 duplicate impressions**, then the EXP-114 brief and the CTR metric definition.")
-dry_run.show("s3_search")
 story.turn(3)
 
 render_explanation("Hybrid search, no embeddings to manage", """

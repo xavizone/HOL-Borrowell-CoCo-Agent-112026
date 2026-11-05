@@ -6,7 +6,6 @@ from components import (answer_key, render_checkpoint, render_execution_context,
                         render_what_you_built)
 from content import links as L
 from content import story
-import dry_run
 
 render_session_header("Session 2", "Build the semantic layer", "20 min",
                       "Curated views + semantic view `PRODUCT_INSIGHTS_SV`")
@@ -27,7 +26,6 @@ render_prompt("Prompt 2.1", "Curated views", """In {FQ_SCHEMA}, create views ove
 Add a comment to each view saying what it removes. Show me the SQL before running it.""")
 render_snowsight_route(["Open a worksheet in `{SCHEMA}` and run the *Behind?* SQL below (views part)."])
 render_checkpoint("`SHOW VIEWS IN SCHEMA {FQ_SCHEMA};` lists 4 views. `OFFER_EVENTS_V` has about **516K** rows (all four event types, bots, test accounts and duplicates removed).")
-dry_run.show("s2_views")
 
 render_prompt("Prompt 2.2", "The semantic view", """/semantic_studio Create a semantic view {FQ_SCHEMA}.PRODUCT_INSIGHTS_SV over MEMBERS_V, OFFERS_V, OFFER_EVENTS_V and APPLICATIONS_V.
 - Relationships: OFFER_EVENTS_V and APPLICATIONS_V to MEMBERS_V (member_id) and to OFFERS_V (offer_id); the events/applications side is the left (many) table.
@@ -46,7 +44,6 @@ render_snowsight_route(["Run the query below in a worksheet."], sql="""SELECT * 
   METRICS events.impressions, events.clicks, events.ctr) ORDER BY week;""")
 render_checkpoint("Governed CTR is **flat at about 6.0%** every week (5.7-6.3%). Naive CTR sits around 7.8% and appears to "
                   "fall about 12% from the week of 21 Sep. One definition, and the September \"crash\" is gone.")
-dry_run.show("s2_prove")
 story.turn(2)
 
 render_explanation("Why curated views first, then a semantic view", """
