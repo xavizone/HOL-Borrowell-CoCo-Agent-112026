@@ -49,7 +49,7 @@ render_snowsight_route([
 ])
 render_checkpoint("The trace shows `recommend_offers` returning 3 rows and the answer quotes them ($165.33, $147.27, $135.38). Eval: **6/6**.")
 dry_run.show("st_tool")
-dry_run.show("s5_eval_after", "Dry-run result: the final eval")
+dry_run.show("s5_eval_after", "Simulated response: the final eval")
 story.turn(6)
 story.epilogue()
 

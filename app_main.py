@@ -16,7 +16,7 @@ def _title(session_id, label: str) -> str:
 def main(dry_run: bool = False):
     """Shared by Workshop_Guide_Start.py (interactive) and Dry_Run_Results.py (captured results)."""
     st.set_page_config(
-        page_title="Borrowell | Product Insights Agent hands-on lab" + (" - dry-run results" if dry_run else ""),
+        page_title="Borrowell | Product Insights Agent hands-on lab" + (" - simulated results" if dry_run else ""),
         page_icon=":material/insights:",
         layout="wide",
     )
@@ -33,7 +33,7 @@ def main(dry_run: bool = False):
 
     with st.sidebar:
         if dry_run:
-            st.markdown(":material/visibility: **Dry-run results**  \nRead-only. No Snowflake connection needed.")
+            st.markdown(":material/visibility: **Simulated results**  \nRead-only. No Snowflake connection needed.")
         st.text_input(
             disabled=dry_run,
             label="Your lab name",

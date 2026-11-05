@@ -262,11 +262,15 @@ PANELS = {
 }
 
 
-def show(key: str, title: str = "Dry-run result"):
+RESPONSE_PANELS = {"s4_ask", "s5_fix", "st_tool", "s5_eval_after"}  # agent answers, not just SQL
+
+
+def show(key: str, title: str | None = None):
     """Render the captured result for one step. No-op in the interactive guide."""
     if not enabled():
         return
     with st.container(border=True):
+        title = title or ("Simulated response" if key in RESPONSE_PANELS else "Simulated result set")
         st.markdown(f"##### :material/fact_check: {title}")
         st.caption(f"Captured from a real run as `{RUN_AS}`, {CAPTURED_ON}. Synthetic data.")
         PANELS[key]()
@@ -274,6 +278,6 @@ def show(key: str, title: str = "Dry-run result"):
 
 def banner():
     if enabled():
-        st.info("**Dry-run results (read-only).** You don't need a Snowflake connection. Every prompt is shown "
+        st.info("**Simulated results (read-only).** You don't need a Snowflake connection. Every prompt is shown "
                 "with the result it produced on a real run of this lab, so you can follow along or catch up. "
                 "Prompts and SQL use the `DEMO` lab.", icon=":material/visibility:")
